@@ -1,0 +1,1 @@
+### Current Version is 2.0 for Unity 6.0.23f1 and URP 17.0.3 (October 11, 2024).
