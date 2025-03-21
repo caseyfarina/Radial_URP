@@ -149,7 +149,7 @@ MonoBehaviour:
   active: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 2.07
+    m_Value: 1.45
   tintColor:
     m_OverrideState: 1
     m_Value: {r: 0.3679244, g: 0.55540127, b: 1, a: 1}
@@ -158,10 +158,10 @@ MonoBehaviour:
     m_Value: 2
   firstFlareIntensity:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 6.19
   secondaryFlareIntensity:
-    m_OverrideState: 0
-    m_Value: 1
+    m_OverrideState: 1
+    m_Value: 0
   warpedFlareIntensity:
     m_OverrideState: 0
     m_Value: 1
@@ -185,7 +185,7 @@ MonoBehaviour:
     m_Value: 1
   streaksIntensity:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1.14
   streaksLength:
     m_OverrideState: 0
     m_Value: 0.5

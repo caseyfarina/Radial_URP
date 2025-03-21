@@ -5,11 +5,20 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
 
+public enum PlaybackMode
+{
+    RandomEachTime,
+    PreselectedRandom
+}
+
 [RequireComponent(typeof(AudioSource))]
 public class RandomAudioPlayer : MonoBehaviour
 {
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private string selectedFolder = "sauron";  // Default folder
+
+    [Header("Playback Mode")]
+    [SerializeField] private PlaybackMode playbackMode = PlaybackMode.RandomEachTime;
 
     [Header("Audio Settings")]
     [SerializeField, Range(0f, 1f)] private float minVolume = 0.5f;
@@ -21,11 +30,17 @@ public class RandomAudioPlayer : MonoBehaviour
     [SerializeField] private AudioMixerGroup outputMixerGroup;
 
     private List<AudioClip> audioClips = new();
+    private AudioClip preselectedClip;
 
     private void Awake()
     {
         InitializeAudioSource();
         LoadAudioClips();
+
+        if (playbackMode == PlaybackMode.PreselectedRandom)
+        {
+            SelectRandomClip();
+        }
     }
 
     private void OnValidate()
@@ -73,6 +88,27 @@ public class RandomAudioPlayer : MonoBehaviour
 #endif
 
         LogLoadingResults();
+
+        // If we're in preselected mode, select a random clip after loading
+        if (playbackMode == PlaybackMode.PreselectedRandom && audioClips.Count > 0)
+        {
+            SelectRandomClip();
+        }
+    }
+
+    public void SelectRandomClip()
+    {
+        if (audioClips.Count > 0)
+        {
+            int randomIndex = Random.Range(0, audioClips.Count);
+            preselectedClip = audioClips[randomIndex];
+            Debug.Log($"[RandomAudioPlayer] Preselected clip: {preselectedClip.name}");
+        }
+        else
+        {
+            preselectedClip = null;
+            Debug.Log("[RandomAudioPlayer] Cannot preselect a clip: no clips loaded");
+        }
     }
 
 #if UNITY_EDITOR
@@ -142,21 +178,43 @@ public class RandomAudioPlayer : MonoBehaviour
         if (!CanPlaySound()) return;
 
         float randomVolume = Random.Range(minVolume, maxVolume);
+        AudioClip clipToPlay;
+
+        // Determine which clip to play based on mode
+        if (playbackMode == PlaybackMode.PreselectedRandom)
+        {
+            // Use the preselected clip
+            clipToPlay = preselectedClip;
+            if (clipToPlay == null)
+            {
+                // If somehow preselectedClip is null, try to select one now
+                SelectRandomClip();
+                clipToPlay = preselectedClip;
+
+                // If still null, exit
+                if (clipToPlay == null) return;
+            }
+        }
+        else
+        {
+            // RandomEachTime mode - choose a random clip
+            int randomIndex = Random.Range(0, audioClips.Count);
+            clipToPlay = audioClips[randomIndex];
+        }
 
         if (pitchVariancePercent > 0)
         {
             // If pitch variation is needed, use a separate AudioSource
-            PlaySoundWithPitch(randomVolume);
+            PlaySoundWithPitch(clipToPlay, randomVolume);
         }
         else
         {
             // If no pitch variation, use PlayOneShot
-            int randomIndex = Random.Range(0, audioClips.Count);
-            audioSource.PlayOneShot(audioClips[randomIndex], randomVolume);
+            audioSource.PlayOneShot(clipToPlay, randomVolume);
         }
     }
 
-    private void PlaySoundWithPitch(float volume)
+    private void PlaySoundWithPitch(AudioClip clip, float volume)
     {
         // Create temporary AudioSource only when pitch variation is needed
         GameObject tempGO = new("TempAudio");
@@ -172,11 +230,10 @@ public class RandomAudioPlayer : MonoBehaviour
         tempSource.pitch = randomPitch;
 
         // Play sound
-        int randomIndex = Random.Range(0, audioClips.Count);
-        tempSource.PlayOneShot(audioClips[randomIndex], volume);
+        tempSource.PlayOneShot(clip, volume);
 
         // Destroy after playing
-        float clipLength = audioClips[randomIndex].length / randomPitch;
+        float clipLength = clip.length / randomPitch;
         Destroy(tempGO, clipLength + 0.1f);
     }
 
@@ -184,10 +241,22 @@ public class RandomAudioPlayer : MonoBehaviour
     {
         if (audioClips.Count == 0)
         {
-            Debug.LogWarning("[RandomAudioPlayer] No audio clips loaded!");
+            Debug.Log("[RandomAudioPlayer] No audio clips loaded!");
             return false;
         }
         return true;
+    }
+
+    // Method to set playback mode from outside the class
+    public void SetPlaybackMode(PlaybackMode mode)
+    {
+        playbackMode = mode;
+
+        // If switching to preselected mode, select a clip right away
+        if (mode == PlaybackMode.PreselectedRandom)
+        {
+            SelectRandomClip();
+        }
     }
 }
 
@@ -197,6 +266,7 @@ public class RandomAudioPlayerEditor : Editor
 {
     private SerializedProperty audioSourceProp;
     private SerializedProperty selectedFolderProp;
+    private SerializedProperty playbackModeProp;
     private SerializedProperty minVolumeProp;
     private SerializedProperty maxVolumeProp;
     private SerializedProperty pitchVarianceProp;
@@ -214,6 +284,7 @@ public class RandomAudioPlayerEditor : Editor
     {
         audioSourceProp = serializedObject.FindProperty("audioSource");
         selectedFolderProp = serializedObject.FindProperty("selectedFolder");
+        playbackModeProp = serializedObject.FindProperty("playbackMode");
         minVolumeProp = serializedObject.FindProperty("minVolume");
         maxVolumeProp = serializedObject.FindProperty("maxVolume");
         pitchVarianceProp = serializedObject.FindProperty("pitchVariancePercent");
@@ -241,12 +312,27 @@ public class RandomAudioPlayerEditor : Editor
 
         EditorGUILayout.PropertyField(audioSourceProp);
 
+        // Playback Mode dropdown
+        EditorGUI.BeginChangeCheck();
+        EditorGUILayout.PropertyField(playbackModeProp, new GUIContent("Playback Mode"));
+        bool playbackModeChanged = EditorGUI.EndChangeCheck();
+
         DrawFolderSelection();
         DrawAudioSettings();
         DrawMixerSettings();
         DrawTestControls();
 
         serializedObject.ApplyModifiedProperties();
+
+        // If playback mode was changed and we're in play mode, update the selection
+        if (playbackModeChanged && Application.isPlaying)
+        {
+            RandomAudioPlayer player = (RandomAudioPlayer)target;
+            if (playbackModeProp.enumValueIndex == (int)PlaybackMode.PreselectedRandom)
+            {
+                player.SelectRandomClip();
+            }
+        }
     }
 
     private void DrawFolderSelection()
@@ -324,11 +410,21 @@ public class RandomAudioPlayerEditor : Editor
             UpdateFolderList();
         }
 
+        RandomAudioPlayer audioPlayer = (RandomAudioPlayer)target;
+
         using (new EditorGUI.DisabledGroupScope(!Application.isPlaying))
         {
+            // Add button to reselect a random clip in preselected mode
+            if (playbackModeProp.enumValueIndex == (int)PlaybackMode.PreselectedRandom)
+            {
+                if (GUILayout.Button("Select New Random Clip", GUILayout.Height(25)))
+                {
+                    audioPlayer.SelectRandomClip();
+                }
+            }
+
             if (GUILayout.Button("Play Test Sound", GUILayout.Height(30)))
             {
-                RandomAudioPlayer audioPlayer = (RandomAudioPlayer)target;
                 audioPlayer.PlayRandomSound();
             }
 
