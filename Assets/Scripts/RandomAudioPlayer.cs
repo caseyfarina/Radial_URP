@@ -45,18 +45,34 @@ public class RandomAudioPlayer : MonoBehaviour
 
     private void OnValidate()
     {
+        // In the Editor, initialize the AudioSource reference when component is added or reset
+        if (!Application.isPlaying && audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+
         if (minVolume > maxVolume)
         {
             minVolume = maxVolume;
         }
+
+        // Apply mixer group in the editor too if possible
+        ApplyMixerGroup();
     }
 
     private void InitializeAudioSource()
     {
-        audioSource = audioSource ?? GetComponent<AudioSource>();
+        // Only try to get the AudioSource if we don't already have one assigned
         if (audioSource == null)
         {
-            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource = GetComponent<AudioSource>();
+
+            // If there's still no AudioSource (unlikely due to RequireComponent), create one
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+                Debug.Log("[RandomAudioPlayer] Added AudioSource component");
+            }
         }
 
         // Configure default settings
@@ -64,9 +80,20 @@ public class RandomAudioPlayer : MonoBehaviour
         audioSource.spatialBlend = 0f;  // Default to 2D sound
         audioSource.loop = false;
 
-        if (outputMixerGroup != null)
+        // Apply mixer group settings
+        ApplyMixerGroup();
+    }
+
+    private void ApplyMixerGroup()
+    {
+        // Apply mixer group if assigned
+        if (audioSource != null && outputMixerGroup != null)
         {
-            audioSource.outputAudioMixerGroup = outputMixerGroup;
+            if (audioSource.outputAudioMixerGroup != outputMixerGroup)
+            {
+                audioSource.outputAudioMixerGroup = outputMixerGroup;
+                Debug.Log("[RandomAudioPlayer] Applied AudioMixerGroup to AudioSource");
+            }
         }
     }
 
@@ -241,7 +268,7 @@ public class RandomAudioPlayer : MonoBehaviour
     {
         if (audioClips.Count == 0)
         {
-            Debug.Log("[RandomAudioPlayer] No audio clips loaded!");
+            Debug.LogWarning("[RandomAudioPlayer] No audio clips loaded!");
             return false;
         }
         return true;
@@ -278,6 +305,14 @@ public class RandomAudioPlayerEditor : Editor
     {
         InitializeProperties();
         UpdateFolderList();
+
+        // Make sure we have an audio source reference at edit time too
+        RandomAudioPlayer player = (RandomAudioPlayer)target;
+        if (player.GetComponent<AudioSource>() != null)
+        {
+            audioSourceProp.objectReferenceValue = player.GetComponent<AudioSource>();
+            serializedObject.ApplyModifiedProperties();
+        }
     }
 
     private void InitializeProperties()
@@ -331,6 +366,17 @@ public class RandomAudioPlayerEditor : Editor
             if (playbackModeProp.enumValueIndex == (int)PlaybackMode.PreselectedRandom)
             {
                 player.SelectRandomClip();
+            }
+        }
+
+        // Apply mixer group changes immediately
+        if (GUI.changed && outputMixerGroupProp.objectReferenceValue != null)
+        {
+            RandomAudioPlayer player = (RandomAudioPlayer)target;
+            AudioSource source = player.GetComponent<AudioSource>();
+            if (source != null)
+            {
+                source.outputAudioMixerGroup = outputMixerGroupProp.objectReferenceValue as AudioMixerGroup;
             }
         }
     }

@@ -11,6 +11,12 @@ public class RotationController : MonoBehaviour
     public bool rotateY = true;
     public bool rotateZ = false;
 
+    [Tooltip("Whether to automatically start rotating when the game begins")]
+    public bool autoRotate = false;
+
+    [Tooltip("Rotation speed in degrees per second when auto-rotating")]
+    public float autoRotationSpeed = 30f;
+
     [Tooltip("Multiplier to adjust the rotation speed")]
     [Range(0.1f, 500f)]
     public float speedMultiplier = 1f;
@@ -32,6 +38,15 @@ public class RotationController : MonoBehaviour
     {
         cachedTransform = transform;
         UpdateRotationVector();
+    }
+
+    private void Start()
+    {
+        // Initialize auto rotation if enabled
+        if (autoRotate)
+        {
+            rotationSpeed = autoRotationSpeed;
+        }
     }
 
     private void Update()
@@ -96,6 +111,52 @@ public class RotationController : MonoBehaviour
     public void RandomizeSpeedMultiplier()
     {
         speedMultiplier = Random.Range(minRandomMultiplier, maxRandomMultiplier);
+    }
+
+    /// <summary>
+    /// Toggle auto rotation on or off.
+    /// </summary>
+    /// <param name="enableAutoRotate">Whether auto rotation should be enabled</param>
+    public void SetAutoRotate(bool enableAutoRotate)
+    {
+        autoRotate = enableAutoRotate;
+
+        if (autoRotate)
+        {
+            rotationSpeed = autoRotationSpeed;
+        }
+        else if (rotationSpeed == autoRotationSpeed)
+        {
+            // Only reset rotation speed if it's the auto rotation speed
+            // (to avoid interfering with speeds set through other methods)
+            rotationSpeed = 0f;
+        }
+    }
+
+    /// <summary>
+    /// Increment the rotation speed by the specified amount.
+    /// </summary>
+    /// <param name="increment">Amount to increase the rotation speed by</param>
+    public void IncrementRotationSpeed(float increment = 5f)
+    {
+        rotationSpeed += increment;
+    }
+
+    /// <summary>
+    /// Decrement the rotation speed by the specified amount.
+    /// </summary>
+    /// <param name="decrement">Amount to decrease the rotation speed by</param>
+    public void DecrementRotationSpeed(float decrement = 5f)
+    {
+        rotationSpeed -= decrement;
+    }
+
+    /// <summary>
+    /// Reverses the current rotation direction by multiplying the rotation speed by -1.
+    /// </summary>
+    public void ReverseRotationDirection()
+    {
+        rotationSpeed = -rotationSpeed;
     }
 
     /// <summary>

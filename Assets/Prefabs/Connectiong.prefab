@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 540cfd1427353c947815fbf49177d904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 5037739101862712169}
   selectedFolder: stonehits
   playbackMode: 0
   minVolume: 0.1
@@ -5141,7 +5141,7 @@ GameObject:
   - component: {fileID: 6290267821678155023}
   m_Layer: 0
   m_Name: Connectiong
-  m_TagString: Untagged
+  m_TagString: Entity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5250,14 +5250,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 540cfd1427353c947815fbf49177d904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 6290267821678155023}
   selectedFolder: bowl
   playbackMode: 0
   minVolume: 0.001
   maxVolume: 0.1
   pitchVariancePercent: 0
   audioMixer: {fileID: 24100000, guid: 0538b470a5191d64aacea13e12f0f96d, type: 2}
-  outputMixerGroup: {fileID: 0}
+  outputMixerGroup: {fileID: 24300002, guid: 0538b470a5191d64aacea13e12f0f96d, type: 2}
 --- !u!120 &372462760434907502
 LineRenderer:
   serializedVersion: 2
@@ -5488,7 +5488,7 @@ AudioSource:
   m_GameObject: {fileID: 6729180099708457429}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 0538b470a5191d64aacea13e12f0f96d, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1

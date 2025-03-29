@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 1904468269056493310}
   - component: {fileID: 4637680229200333225}
   - component: {fileID: -7489656268835163320}
+  - component: {fileID: -881613645460167548}
   m_Layer: 0
   m_Name: spotLighOne
   m_TagString: Entity
@@ -241,7 +242,7 @@ AudioSource:
   m_GameObject: {fileID: 7239347473236030941}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 0538b470a5191d64aacea13e12f0f96d, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
@@ -341,11 +342,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 540cfd1427353c947815fbf49177d904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 4637680229200333225}
   selectedFolder: saron
   playbackMode: 1
   minVolume: 0.5
   maxVolume: 1
   pitchVariancePercent: 0
   audioMixer: {fileID: 24100000, guid: 0538b470a5191d64aacea13e12f0f96d, type: 2}
-  outputMixerGroup: {fileID: 0}
+  outputMixerGroup: {fileID: 24300002, guid: 0538b470a5191d64aacea13e12f0f96d, type: 2}
+--- !u!114 &-881613645460167548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7239347473236030941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea37d9ff8e101fb42a867e45b04d6c23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minTime: 1
+  maxTime: 5
+  onTimerTriggered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: -7489656268835163320}
+        m_TargetAssemblyTypeName: RandomAudioPlayer, Assembly-CSharp
+        m_MethodName: PlayRandomSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  logTimings: 0
