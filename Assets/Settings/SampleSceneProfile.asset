@@ -217,11 +217,11 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 0.5
   streaksOrientation:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 90.78
   streaksThreshold:
-    m_OverrideState: 0
-    m_Value: 0.25
+    m_OverrideState: 1
+    m_Value: 0.139
   resolution:
     m_OverrideState: 0
     m_Value: 4

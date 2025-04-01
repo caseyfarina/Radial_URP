@@ -2,20 +2,29 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M Glass Wine Inner
   m_Shader: {fileID: 4800000, guid: be01a6202122cde4e9b0bd2e7f93a961, type: 3}
-  m_ShaderKeywords: _BASEMAP _EXCLUDEFOREGROUND _FINALALPHA _GEOREFRACTIONS _MASKMAP
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _BASEMAP
+  - _EXCLUDEFOREGROUND
+  - _FINALALPHA
+  - _GEOREFRACTIONS
+  - _MASKMAP
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3001
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -39,6 +48,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 0
     - _ApplyNormal: 0
@@ -58,9 +68,9 @@ Material:
     - _EnableTintMap: 0
     - _EnvironmentReflections: 1
     - _ExcludeForeground: 1
-    - _FinalAlpha: 0.5
-    - _IOR: 1.5
-    - _IsThinShell: 0.96
+    - _FinalAlpha: 0.454
+    - _IOR: 24.55
+    - _IsThinShell: 0
     - _Occlusion: 1
     - _PixelDepth: 10.8
     - _QueueOffset: 0
@@ -75,8 +85,8 @@ Material:
     - _ScreenEdgeFade: 8
     - _ShadowOffset: 1
     - _ShadowStrength: 0.7
-    - _Smoothness: 0.917
-    - _SmoothnessBase: 0.5
+    - _Smoothness: 0.202
+    - _SmoothnessBase: 0.47
     - _SpecularHighlights: 1
     - _SrcBlend: 5
     - _Stencil: 1
@@ -96,3 +106,4 @@ Material:
     - _SpecColor: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 1}
     - _SpecColorBase: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
