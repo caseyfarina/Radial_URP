@@ -8,15 +8,15 @@ public class _playhead : MonoBehaviour
     [Header("Detection Settings")]
     [SerializeField] private string targetTag = "Entity";
     [SerializeField] private bool debugMode = true;
-    
+
     [Header("Trigger Response Settings")]
     [SerializeField] private bool respondOnEnter = true;
     [SerializeField] private bool respondOnExit = false;
     [SerializeField] private bool respondOnStay = false;
     [SerializeField, Range(0f, 10f)] private float stayInterval = 2f;
-    
+
     private float nextStayResponseTime;
-    
+
     private void Awake()
     {
         // Check for required components
@@ -28,14 +28,14 @@ public class _playhead : MonoBehaviour
             rb.useGravity = false; // Don't let gravity affect it
         }
     }
-    
+
     private void Start()
     {
         nextStayResponseTime = Time.time;
         DebugLog("_playhead script initialized");
         DebugLog($"Target tag: {targetTag}");
         DebugLog($"Enter: {respondOnEnter}, Exit: {respondOnExit}, Stay: {respondOnStay}");
-        
+
         // Check if this object actually has a collider
         Collider col = GetComponent<Collider>();
         if (col == null)
@@ -51,15 +51,15 @@ public class _playhead : MonoBehaviour
             DebugLog("Collider check: OK");
         }
     }
-    
+
     private void OnTriggerEnter(Collider other)
     {
         DebugLog($"OnTriggerEnter detected with {other.name}, tag: {other.tag}");
-        
+
         if (other.CompareTag(targetTag))
         {
             DebugLog("Tag match: YES");
-            
+
             if (respondOnEnter)
             {
                 DebugLog("Respond on enter: YES - Triggering event");
@@ -75,15 +75,15 @@ public class _playhead : MonoBehaviour
             DebugLog($"Tag match: NO (Expected '{targetTag}', got '{other.tag}')");
         }
     }
-    
+
     private void OnTriggerExit(Collider other)
     {
         DebugLog($"OnTriggerExit detected with {other.name}, tag: {other.tag}");
-        
+
         if (other.CompareTag(targetTag))
         {
             DebugLog("Tag match: YES");
-            
+
             if (respondOnExit)
             {
                 DebugLog("Respond on exit: YES - Triggering event");
@@ -95,7 +95,7 @@ public class _playhead : MonoBehaviour
             }
         }
     }
-    
+
     private void OnTriggerStay(Collider other)
     {
         if (respondOnStay && other.CompareTag(targetTag) && Time.time >= nextStayResponseTime)
@@ -105,15 +105,15 @@ public class _playhead : MonoBehaviour
             nextStayResponseTime = Time.time + stayInterval;
         }
     }
-    
+
     private void TriggerEventOnObject(GameObject targetObject)
     {
-        // Find _playheadEventRelay component and trigger its event
+        // Find _playheadEventRelay component and call its ActivateObject method
         _playheadEventRelay eventRelay = targetObject.GetComponent<_playheadEventRelay>();
         if (eventRelay != null)
         {
-            DebugLog($"_playheadEventRelay found on {targetObject.name}, invoking event");
-            eventRelay.OnTriggerActivated.Invoke();
+            DebugLog($"_playheadEventRelay found on {targetObject.name}, calling ActivateObject");
+            eventRelay.ActivateObject();
         }
         else
         {
@@ -121,8 +121,8 @@ public class _playhead : MonoBehaviour
             eventRelay = targetObject.GetComponentInChildren<_playheadEventRelay>();
             if (eventRelay != null)
             {
-                DebugLog($"_playheadEventRelay found in children of {targetObject.name}, invoking event");
-                eventRelay.OnTriggerActivated.Invoke();
+                DebugLog($"_playheadEventRelay found in children of {targetObject.name}, calling ActivateObject");
+                eventRelay.ActivateObject();
             }
             else
             {
@@ -130,7 +130,7 @@ public class _playhead : MonoBehaviour
             }
         }
     }
-    
+
     // Helper method for debug logging
     private void DebugLog(string message)
     {
@@ -139,34 +139,6 @@ public class _playhead : MonoBehaviour
             Debug.Log($"[_playhead] {message}");
         }
     }
-    
-    private void OnDrawGizmos()
-    {
-        // Visualize the trigger zone in the Scene view
-        Collider col = GetComponent<Collider>();
-        if (col != null)
-        {
-            Gizmos.color = new Color(0.2f, 0.8f, 0.2f, 0.3f);
-            Gizmos.matrix = transform.localToWorldMatrix;
-            
-            if (col is BoxCollider boxCol)
-            {
-                Gizmos.DrawCube(boxCol.center, boxCol.size);
-            }
-            else if (col is SphereCollider sphereCol)
-            {
-                Gizmos.DrawSphere(sphereCol.center, sphereCol.radius);
-            }
-            else if (col is CapsuleCollider capsuleCol)
-            {
-                // Approximate capsule visualization
-                Vector3 size = new Vector3(
-                    capsuleCol.radius * 2,
-                    capsuleCol.height,
-                    capsuleCol.radius * 2
-                );
-                Gizmos.DrawCube(capsuleCol.center, size);
-            }
-        }
-    }
+
+
 }

@@ -56,7 +56,7 @@ Light:
     m_Strength: 1
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 0.2
+    m_NearPlane: 0.1
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -139,7 +139,6 @@ GameObject:
   - component: {fileID: 8695419620162158517}
   - component: {fileID: -7489656268835163320}
   - component: {fileID: 1178342263821727268}
-  - component: {fileID: 6533026278353785282}
   m_Layer: 0
   m_Name: morphingPrefab
   m_TagString: Entity
@@ -397,18 +396,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6533026278353785282}
-        m_TargetAssemblyTypeName: PositionEffect, Assembly-CSharp
-        m_MethodName: PlayMoveWithLoops
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  multiTriggerMode: 1
+  minConsecutiveTriggers: 3
+  maxConsecutiveTriggers: 15
+  timeBetweenTriggers: 0.081
+  timeRandomizationPercent: 16.9
+  activationCooldown: 0.3
   debugMode: 0
 --- !u!114 &6367135270829646646
 MonoBehaviour:
@@ -435,8 +428,17 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
+      time: 0.1039823
+      value: 1.0133588
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
       time: 1
-      value: 1
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -568,55 +570,5 @@ MonoBehaviour:
     m_RotationOrder: 4
   emissionDuration: 1
   emissionColor: {r: 1, g: 1, b: 1, a: 1}
-  emissionIntensity: 4.8
-  debugMode: 0
---- !u!114 &6533026278353785282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7239347473236030941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 789ec1c8be160614d9d2fdedf23b9555, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveDistance: 2.64
-  moveDuration: 1.53
-  moveAxis: 1
-  moveCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 16.80923
-      outSlope: 16.80923
-      tangentMode: 0
-      weightedMode: 3
-      inWeight: 0
-      outWeight: 0.15909497
-    - serializedVersion: 3
-      time: 0.20924267
-      value: 0.7250689
-      inSlope: 1.0736972
-      outSlope: 1.0736972
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.049055237
-    - serializedVersion: 3
-      time: 0.98195183
-      value: 1.0005007
-      inSlope: 0.0000028307522
-      outSlope: 0.0000028307522
-      tangentMode: 0
-      weightedMode: 3
-      inWeight: 0.046513528
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  defaultLoopCount: 2
+  emissionIntensity: 7.31
   debugMode: 0

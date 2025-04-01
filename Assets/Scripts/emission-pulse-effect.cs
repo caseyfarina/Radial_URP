@@ -1,8 +1,8 @@
 using UnityEngine;
-using System.Collections;
+using DG.Tweening;
 
 /// <summary>
-/// Optimized emission effect using Material Property Blocks
+/// Optimized emission effect using Material Property Blocks and DOTween
 /// </summary>
 public class EmissionPulseEffect : MonoBehaviour
 {
@@ -12,61 +12,41 @@ public class EmissionPulseEffect : MonoBehaviour
     [SerializeField] private Color emissionColor = Color.white;
     [SerializeField, Range(0f, 10f)] private float emissionIntensity = 1f;
     [SerializeField] private bool debugMode = false;
-    
+
     private MaterialPropertyBlock propertyBlock;
     private Renderer[] renderers;
-    private Coroutine activeEmissionPulse;
-    
+    private Tween activeEmissionTween;
+
+    // Store original emission values
+    private Color[] originalEmissions;
+    private bool[] hasEmission;
+
+    // Value that will be tweened by DOTween
+    private float currentEmissionValue = 0f;
+
     private void Awake()
     {
         // Initialize property block once
         propertyBlock = new MaterialPropertyBlock();
-        
+
         // Cache renderers for better performance
         renderers = GetComponentsInChildren<Renderer>();
-        
-        // Ensure emission is enabled on all materials
-        foreach (Renderer renderer in renderers)
-        {
-            if (renderer.sharedMaterial != null && renderer.sharedMaterial.HasProperty("_EmissionColor"))
-            {
-                renderer.sharedMaterial.EnableKeyword("_EMISSION");
-            }
-        }
-    }
-    
-    /// <summary>
-    /// Starts emission pulse effect using efficient Material Property Blocks
-    /// </summary>
-    public void PlayEmission()
-    {
-        DebugLog("PlayEmission called");
-        
-        // Stop any current emission pulse
-        if (activeEmissionPulse != null)
-        {
-            StopCoroutine(activeEmissionPulse);
-            activeEmissionPulse = null;
-        }
-        
-        // Start emission pulse
-        activeEmissionPulse = StartCoroutine(PulseEmissionCoroutine());
-    }
-    
-    private IEnumerator PulseEmissionCoroutine()
-    {
-        // Store original emission values
-        Color[] originalEmissions = new Color[renderers.Length];
-        bool[] hasEmission = new bool[renderers.Length];
-        
+
+        // Initialize arrays for storing original values
+        originalEmissions = new Color[renderers.Length];
+        hasEmission = new bool[renderers.Length];
+
+        // Ensure emission is enabled on all materials and cache original values
         for (int i = 0; i < renderers.Length; i++)
         {
             if (renderers[i].sharedMaterial != null && renderers[i].sharedMaterial.HasProperty("_EmissionColor"))
             {
+                renderers[i].sharedMaterial.EnableKeyword("_EMISSION");
+
                 // Get current property block values
                 renderers[i].GetPropertyBlock(propertyBlock);
-                
-                // Check if emission color is already set in the property block
+
+                // Cache the original emission value
                 if (propertyBlock.HasColor("_EmissionColor"))
                 {
                     originalEmissions[i] = propertyBlock.GetColor("_EmissionColor");
@@ -76,7 +56,7 @@ public class EmissionPulseEffect : MonoBehaviour
                     // If not set in property block, get from shared material
                     originalEmissions[i] = renderers[i].sharedMaterial.GetColor("_EmissionColor");
                 }
-                
+
                 hasEmission[i] = true;
                 DebugLog($"Found emission-capable material on {renderers[i].name}");
             }
@@ -85,33 +65,72 @@ public class EmissionPulseEffect : MonoBehaviour
                 hasEmission[i] = false;
             }
         }
-        
-        // Perform pulse animation
-        float startTime = Time.time;
-        
-        while (Time.time < startTime + emissionDuration)
+    }
+
+    /// <summary>
+    /// Starts emission pulse effect using DOTween and efficient Material Property Blocks
+    /// </summary>
+    public void PlayEmission()
+    {
+        DebugLog("PlayEmission called");
+
+        // Stop any current emission tween
+        if (activeEmissionTween != null && activeEmissionTween.IsActive())
         {
-            float progress = (Time.time - startTime) / emissionDuration;
-            float curveValue = emissionCurve.Evaluate(progress);
-            
-            // Calculate emission color
-            Color newEmission = emissionColor * curveValue * emissionIntensity;
-            
-            // Update all renderers with property block
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                if (hasEmission[i])
-                {
-                    renderers[i].GetPropertyBlock(propertyBlock);
-                    propertyBlock.SetColor("_EmissionColor", newEmission);
-                    renderers[i].SetPropertyBlock(propertyBlock);
-                }
-            }
-            
-            yield return null;
+            DebugLog("Interrupting current emission pulse");
+            activeEmissionTween.Kill();
+            activeEmissionTween = null;
+
+            // Reset emission values to original immediately
+            ResetEmissionToOriginal();
         }
-        
-        // Reset to original values
+
+        // Reset current emission value
+        currentEmissionValue = 0f;
+
+        // Create a new tween for the emission pulse
+        activeEmissionTween = DOTween.To(
+            () => currentEmissionValue,             // Getter
+            x => {                                  // Setter
+                currentEmissionValue = x;
+                UpdateEmissionValue(x);
+            },
+            1f,                                     // Target value (full emission)
+            emissionDuration                        // Duration
+        )
+        .SetEase(emissionCurve)                     // Use the custom animation curve
+        .OnComplete(() => {
+            DebugLog("Emission pulse complete");
+            ResetEmissionToOriginal();
+            activeEmissionTween = null;
+        });
+    }
+
+    /// <summary>
+    /// Updates all renderer emission values based on the current emission value
+    /// </summary>
+    private void UpdateEmissionValue(float value)
+    {
+        // Calculate emission color
+        Color newEmission = emissionColor * value * emissionIntensity;
+
+        // Update all renderers with property block
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (hasEmission[i])
+            {
+                renderers[i].GetPropertyBlock(propertyBlock);
+                propertyBlock.SetColor("_EmissionColor", newEmission);
+                renderers[i].SetPropertyBlock(propertyBlock);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resets emission values to their original state
+    /// </summary>
+    private void ResetEmissionToOriginal()
+    {
         for (int i = 0; i < renderers.Length; i++)
         {
             if (hasEmission[i])
@@ -121,20 +140,36 @@ public class EmissionPulseEffect : MonoBehaviour
                 renderers[i].SetPropertyBlock(propertyBlock);
             }
         }
-        
-        DebugLog("Emission pulse complete");
-        activeEmissionPulse = null;
+
+        DebugLog("Reset emission to original values");
     }
-    
-    private void OnDestroy()
+
+    /// <summary>
+    /// Stops any active emission pulse and resets to original values
+    /// </summary>
+    public void StopEmission()
     {
-        // Clean up coroutine if active
-        if (activeEmissionPulse != null)
+        if (activeEmissionTween != null && activeEmissionTween.IsActive())
         {
-            StopCoroutine(activeEmissionPulse);
+            DebugLog("Stopping emission pulse");
+            activeEmissionTween.Kill();
+            activeEmissionTween = null;
+
+            // Reset emission values to original
+            ResetEmissionToOriginal();
         }
     }
-    
+
+    private void OnDestroy()
+    {
+        // Clean up tween if active
+        if (activeEmissionTween != null && activeEmissionTween.IsActive())
+        {
+            activeEmissionTween.Kill();
+            activeEmissionTween = null;
+        }
+    }
+
     // Helper method for debug logging
     private void DebugLog(string message)
     {

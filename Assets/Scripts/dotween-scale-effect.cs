@@ -48,16 +48,19 @@ public class ScaleAnimationEffect : MonoBehaviour
     {
         DebugLog($"PlayScaleAnimation called with {(loopCount == -1 ? "infinite" : loopCount.ToString())} loops");
 
-        // Update original scale in case it changed
-        originalScale = transform.localScale;
-        Vector3 targetScale = originalScale * scaleMultiplier;
-
         // If there's an active tween, kill it
         if (activeScaleTween != null && activeScaleTween.IsActive())
         {
             DebugLog("Already animating scale, restarting...");
             activeScaleTween.Kill();
+            activeScaleTween = null;
         }
+
+        // Reset to original scale immediately before starting new animation
+        transform.localScale = originalScale;
+
+        // Calculate target scale based on original scale
+        Vector3 targetScale = originalScale * scaleMultiplier;
 
         DebugLog($"Scale animation from {originalScale} to {targetScale}");
 
@@ -77,6 +80,8 @@ public class ScaleAnimationEffect : MonoBehaviour
         // Set callbacks
         scaleSequence.OnComplete(() => {
             DebugLog("Scale animation complete");
+            // Ensure we're at the original scale when complete
+            transform.localScale = originalScale;
             activeScaleTween = null;
         });
 
@@ -85,30 +90,31 @@ public class ScaleAnimationEffect : MonoBehaviour
     }
 
     /// <summary>
-    /// Custom implementation with a scaled curve (pulse effect) using default loop count
+    /// Custom implementation with a scaled curve effect using default loop count
     /// </summary>
-    public void PlayPulsatingScale()
+    public void PlayScaleAnimationCurve()
     {
-        PlayPulsatingScaleWithLoops(defaultLoopCount);
+        PlayScaleAnimationCurveWithLoops(defaultLoopCount);
     }
 
     /// <summary>
-    /// Custom implementation with a scaled curve (pulse effect) with specified loop count
+    /// Custom implementation with a scaled curve effect with specified loop count
     /// </summary>
     /// <param name="loopCount">Number of times to repeat the animation. -1 for infinite loops.</param>
-    public void PlayPulsatingScaleWithLoops(int loopCount)
+    public void PlayScaleAnimationCurveWithLoops(int loopCount)
     {
-        DebugLog($"PlayPulsatingScale called with {(loopCount == -1 ? "infinite" : loopCount.ToString())} loops");
-
-        // Update original scale in case it changed
-        originalScale = transform.localScale;
+        DebugLog($"PlayScaleAnimationCurve called with {(loopCount == -1 ? "infinite" : loopCount.ToString())} loops");
 
         // If there's an active tween, kill it
         if (activeScaleTween != null && activeScaleTween.IsActive())
         {
             DebugLog("Already animating scale, restarting...");
             activeScaleTween.Kill();
+            activeScaleTween = null;
         }
+
+        // Reset to original scale immediately before starting new animation
+        transform.localScale = originalScale;
 
         // Create a DOTween tween with a custom ease function that uses our AnimationCurve
         activeScaleTween = transform.DOScale(originalScale, scaleDuration)
@@ -128,14 +134,15 @@ public class ScaleAnimationEffect : MonoBehaviour
                 }
             })
             .OnComplete(() => {
-                DebugLog("Pulsating scale complete");
-                transform.localScale = originalScale; // Ensure it ends at original scale
+                DebugLog("Scale animation curve complete");
+                // Ensure we're at the original scale when complete
+                transform.localScale = originalScale;
                 activeScaleTween = null;
             });
     }
 
     /// <summary>
-    /// Stops any active scale animation
+    /// Stops any active scale animation and resets to original scale
     /// </summary>
     public void StopScaleAnimation()
     {
@@ -144,6 +151,9 @@ public class ScaleAnimationEffect : MonoBehaviour
             DebugLog("Stopping scale animation");
             activeScaleTween.Kill();
             activeScaleTween = null;
+
+            // Reset to original scale
+            transform.localScale = originalScale;
         }
     }
 
