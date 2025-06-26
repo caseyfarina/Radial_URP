@@ -13,13 +13,15 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _EXCLUDEFOREGROUND
+  - _FINALALPHA
   - _GEOREFRACTIONS
   - _MASKMAP
-  - _RECEIVE_SHADOWS_OFF
+  - _NORMALMAP
+  - _RIMLIGHTING
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
+  m_DoubleSidedGI: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
@@ -32,7 +34,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: c3bb1d5298b924d80959c9f822ffe414, type: 3}
+        m_Texture: {fileID: 2800000, guid: 82b123d008de09948adc8d1433889121, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -50,16 +52,16 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaClip: 0
-    - _ApplyNormal: 0
-    - _Blend: 0
-    - _BumpRefraction: 0.05
-    - _BumpScale: 1
-    - _Cull: 2
+    - _ApplyNormal: 1
+    - _Blend: 1
+    - _BumpRefraction: 1
+    - _BumpScale: 0.91
+    - _Cull: 0
     - _CustomWrap: 0.4
     - _Cutoff: 0.682
     - _Distortion: 0.01
     - _DonNotRefractForeground: 0
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EnableBaseMap: 0
     - _EnableGeoRefr: 1
     - _EnableMaskMap: 1
@@ -68,26 +70,26 @@ Material:
     - _EnvironmentReflections: 1
     - _ExcludeForeground: 1
     - _FinalAlpha: 1
-    - _IOR: 1.5
-    - _IsThinShell: 0
+    - _IOR: 1.13
+    - _IsThinShell: 0.729
     - _Occlusion: 1
     - _PixelDepth: 10
     - _QueueOffset: 0
     - _RayLength: 1
     - _ReadMask: 255
-    - _ReceiveShadows: 0
-    - _Rim: 0
-    - _RimFrequency: 0
+    - _ReceiveShadows: 1
+    - _Rim: 1
+    - _RimFrequency: 59.21
     - _RimMinPower: 1
     - _RimPerPositionFrequency: 1
-    - _RimPower: 2
-    - _ScreenEdgeFade: 8
+    - _RimPower: 0.3
+    - _ScreenEdgeFade: 23.09
     - _ShadowOffset: 1
     - _ShadowStrength: 0.7
-    - _Smoothness: 0.917
-    - _SmoothnessBase: 0.5
+    - _Smoothness: 0.817
+    - _SmoothnessBase: 0.616
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _Stencil: 1
     - _StencilComp: 8
     - _StencilFail: 0
@@ -105,3 +107,4 @@ Material:
     - _SpecColor: {r: 0.20754719, g: 0.20754719, b: 0.20754719, a: 1}
     - _SpecColorBase: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
