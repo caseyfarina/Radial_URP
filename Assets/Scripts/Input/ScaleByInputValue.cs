@@ -2,11 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
-
-sealed class midiInputToEvent
-: MonoBehaviour
+sealed class MidiInputToEvent : MonoBehaviour
 {
-   // [SerializeField] Transform _transform = null;
     [SerializeField] InputAction _action = null;
     public UnityEvent myevent;
 
@@ -24,8 +21,6 @@ sealed class midiInputToEvent
 
     void OnPerformed(InputAction.CallbackContext ctx)
     {
-       // _transform.localScale = Vector3.one * ctx.ReadValue<float>();
-       // Debug.Log(ctx.ReadValue<float>());
         myevent.Invoke();
     }
 }

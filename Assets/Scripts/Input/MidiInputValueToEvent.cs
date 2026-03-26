@@ -2,10 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
-
-sealed class midiInputValueToEvent : MonoBehaviour
+sealed class MidiInputValueToEvent : MonoBehaviour
 {
-    
     [SerializeField] InputAction _action = null;
     [SerializeField] UnityEvent<float> MyFloatEvent;
 
@@ -22,10 +20,7 @@ sealed class midiInputValueToEvent : MonoBehaviour
     }
 
     void OnPerformed(InputAction.CallbackContext ctx)
-    { //_transform.localScale = Vector3.one * ctx.ReadValue<float>();
-        //transform.localScale = Vector3.one * ctx.ReadValue<float>();
+    {
         MyFloatEvent.Invoke(ctx.ReadValue<float>());
-        float test = ctx.ReadValue<float>();
-        Debug.Log(test.ToString());
     }
 }

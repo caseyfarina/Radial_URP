@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Simplified playhead that triggers events on objects that enter the trigger zone
 /// </summary>
-public class _playhead : MonoBehaviour
+public class Playhead : MonoBehaviour
 {
     [Header("Detection Settings")]
     [SerializeField] private string targetTag = "Entity";
@@ -32,7 +32,7 @@ public class _playhead : MonoBehaviour
     private void Start()
     {
         nextStayResponseTime = Time.time;
-        DebugLog("_playhead script initialized");
+        DebugLog("Playhead script initialized");
         DebugLog($"Target tag: {targetTag}");
         DebugLog($"Enter: {respondOnEnter}, Exit: {respondOnExit}, Stay: {respondOnStay}");
 
@@ -40,11 +40,11 @@ public class _playhead : MonoBehaviour
         Collider col = GetComponent<Collider>();
         if (col == null)
         {
-            Debug.LogError("ERROR: No Collider found on _playhead object!");
+            Debug.LogError("ERROR: No Collider found on Playhead object!");
         }
         else if (!col.isTrigger)
         {
-            Debug.LogError("ERROR: Collider on _playhead object is not set as a trigger!");
+            Debug.LogError("ERROR: Collider on Playhead object is not set as a trigger!");
         }
         else
         {
@@ -108,25 +108,25 @@ public class _playhead : MonoBehaviour
 
     private void TriggerEventOnObject(GameObject targetObject)
     {
-        // Find _playheadEventRelay component and call its ActivateObject method
-        _playheadEventRelay eventRelay = targetObject.GetComponent<_playheadEventRelay>();
+        // Find PlayheadEventRelay component and call its ActivateObject method
+        PlayheadEventRelay eventRelay = targetObject.GetComponent<PlayheadEventRelay>();
         if (eventRelay != null)
         {
-            DebugLog($"_playheadEventRelay found on {targetObject.name}, calling ActivateObject");
+            DebugLog($"PlayheadEventRelay found on {targetObject.name}, calling ActivateObject");
             eventRelay.ActivateObject();
         }
         else
         {
             // Check children if not found on parent
-            eventRelay = targetObject.GetComponentInChildren<_playheadEventRelay>();
+            eventRelay = targetObject.GetComponentInChildren<PlayheadEventRelay>();
             if (eventRelay != null)
             {
-                DebugLog($"_playheadEventRelay found in children of {targetObject.name}, calling ActivateObject");
+                DebugLog($"PlayheadEventRelay found in children of {targetObject.name}, calling ActivateObject");
                 eventRelay.ActivateObject();
             }
             else
             {
-                DebugLog($"No _playheadEventRelay found on {targetObject.name} or its children");
+                DebugLog($"No PlayheadEventRelay found on {targetObject.name} or its children");
             }
         }
     }
@@ -136,7 +136,7 @@ public class _playhead : MonoBehaviour
     {
         if (debugMode)
         {
-            Debug.Log($"[_playhead] {message}");
+            Debug.Log($"[Playhead] {message}");
         }
     }
 

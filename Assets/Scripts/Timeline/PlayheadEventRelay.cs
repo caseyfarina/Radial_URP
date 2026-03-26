@@ -6,7 +6,7 @@ using System.Collections;
 /// Relays trigger events from the playhead to individual effect components via UnityEvents.
 /// Supports both single trigger mode and multi-trigger mode with configurable parameters.
 /// </summary>
-public class _playheadEventRelay : MonoBehaviour
+public class PlayheadEventRelay : MonoBehaviour
 {
     [Header("Event Settings")]
     [Tooltip("This event is invoked when triggered by the playhead")]
@@ -222,7 +222,7 @@ public class _playheadEventRelay : MonoBehaviour
     {
         if (debugMode)
         {
-            Debug.Log($"[_playheadEventRelay: {gameObject.name}] {message}");
+            Debug.Log($"[PlayheadEventRelay: {gameObject.name}] {message}");
         }
     }
 }

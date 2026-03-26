@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 /// <summary>
 /// Gradually destroys all GameObjects with the "Entity" tag in the scene.
@@ -46,10 +45,10 @@ public class EntityDestroyer : MonoBehaviour
     {
         isDestroyingEntities = true;
         
-        // Get all entities with the specified tag
-        GameObject[] entities = GameObject.FindGameObjectsWithTag("Entity");
-        
-        int totalCount = entities.Length;
+        // Get all entities from the registry
+        List<GameObject> entities = new List<GameObject>(EntityRegistry.Entities);
+
+        int totalCount = entities.Count;
         int destroyedCount = 0;
         
         if (logDestruction)
@@ -115,9 +114,9 @@ public class EntityDestroyer : MonoBehaviour
             isDestroyingEntities = false;
         }
         
-        GameObject[] entities = GameObject.FindGameObjectsWithTag("Entity");
-        int count = entities.Length;
-        
+        List<GameObject> entities = new List<GameObject>(EntityRegistry.Entities);
+        int count = entities.Count;
+
         foreach (GameObject entity in entities)
         {
             if (entity != null)
@@ -146,7 +145,7 @@ public class EntityDestroyer : MonoBehaviour
     /// <returns>Number of entities</returns>
     public int GetEntityCount()
     {
-        return GameObject.FindGameObjectsWithTag("Entity").Length;
+        return EntityRegistry.Count;
     }
     
     /// <summary>

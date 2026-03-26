@@ -111,9 +111,8 @@ public class FPSAndEntityCounter : MonoBehaviour
     
     private void RefreshEntityCount()
     {
-        // Find all objects with the "Entity" tag
-        GameObject[] entities = GameObject.FindGameObjectsWithTag("Entity");
-        entityCount = entities.Length;
+        // Get count from the cached entity registry
+        entityCount = EntityRegistry.Count;
         
         // Update the display if assigned
         if (entityCountDisplay != null)

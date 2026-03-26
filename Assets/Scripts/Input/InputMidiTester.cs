@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Layouts;
-public class inputMidiTester : MonoBehaviour
+public class InputMidiTester : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
